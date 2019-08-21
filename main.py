@@ -1,7 +1,6 @@
 import numpy
 import scipy.special
 
-
 class NeuralNetwork:
     def __init__(self, input_nodes, hidden_nodes, output_nodes, learning_rate=0.5):
         self.input_nodes = input_nodes
