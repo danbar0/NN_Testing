@@ -1,7 +1,7 @@
 import numpy
 import scipy.special
 
-#TEST TEST TEST
+#TEST TEST TEST TEST
 
 class NeuralNetwork:
     def __init__(self, input_nodes, hidden_nodes, output_nodes, learning_rate=0.5):
@@ -32,7 +32,16 @@ class NeuralNetwork:
         # calculate the signals emerging from final output layer
         final_outputs = self.activationFunction(final_inputs)
 
+        # output layer error is the (target - actual)
         output_errors = targets - final_outputs
+        # hidden layer error is the output_errors, split by weights, recombined at hidden nodes
+        hidden_errors = numpy.dot(self.hidden_to_output_weights.T, output_errors)
+        # update the weights for the links between the hidden and output layers
+        self.hidden_to_output_weights += self.learning_rate * numpy.dot((output_errors * final_outputs * (1.0-final_outputs),
+                                                                         numpy.transpose(hidden_outputs)))
+        # update the weights for the links between the input and hidden layers
+        self.input_to_hidden_weights += self.learning_rate * numpy.dot((hidden_errors * hidden_outputs * (1.0-hidden_outputs)),
+                                                                       numpy.transpose(inputs))
 
     def query(self, inputs_list):
         # convert inputs list to 2d array
