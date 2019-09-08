@@ -1,7 +1,7 @@
 import numpy
 import scipy.special
+import matplotlib.pyplot
 
-#TEST TEST TEST TEST
 
 class NeuralNetwork:
     def __init__(self, input_nodes, hidden_nodes, output_nodes, learning_rate=0.5):
@@ -63,14 +63,28 @@ class NeuralNetwork:
 
 
 def main():
-    input_nodes = 3
-    hidden_nodes = 3
-    output_nodes = 3
+    input_nodes = 784
+    hidden_nodes = 100
+    output_nodes = 10
     learning_rate = 0.5
 
     network = NeuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate)
 
-    print(network.query([1.0, 0.5, -1.5]))
+    training_data_file = open("mnist_dataset/mnist_train_100.csv",'r')
+    training_data_list = training_data_file.readlines()
+    training_data_file.close()
+
+    for record in training_data_list:
+        # split values by commas
+        all_values = record.split(',')
+        # scale and shift the inputs
+        inputs = (numpy.asfarray(all_values[1:]) / 255.0 * 0.99) + 0.01
+        # create the target output values (all 0.01, except the desired label which is 0.99)
+        targets = numpy.zeros(output_nodes) + 0.01
+        # all_values[0] is the target label for this record
+        targets[int(all_values[0])] = 0.99
+        network.train(inputs, targets)
+        pass
 
 
 if __name__ == '__main__':
