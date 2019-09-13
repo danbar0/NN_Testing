@@ -22,7 +22,7 @@ class NeuralNetwork:
         inputs = numpy.array(inputs_list, ndmin=2).T
         targets = numpy.array(targets_list, ndmin=2).T
 
-        # calculate sigansl into hidden layer
+        # calculate signals into hidden layer
         hidden_inputs = numpy.dot(self.input_to_hidden_weights, inputs)
         # calculate the signals emerging from hidden layer
         hidden_outputs = self.activationFunction(hidden_inputs)
@@ -37,8 +37,8 @@ class NeuralNetwork:
         # hidden layer error is the output_errors, split by weights, recombined at hidden nodes
         hidden_errors = numpy.dot(self.hidden_to_output_weights.T, output_errors)
         # update the weights for the links between the hidden and output layers
-        self.hidden_to_output_weights += self.learning_rate * numpy.dot((output_errors * final_outputs * (1.0-final_outputs),
-                                                                         numpy.transpose(hidden_outputs)))
+        self.hidden_to_output_weights += self.learning_rate * numpy.dot((output_errors * final_outputs * (1.0-final_outputs)),
+                                                                         numpy.transpose(hidden_outputs))
         # update the weights for the links between the input and hidden layers
         self.input_to_hidden_weights += self.learning_rate * numpy.dot((hidden_errors * hidden_outputs * (1.0-hidden_outputs)),
                                                                        numpy.transpose(inputs))
@@ -70,7 +70,12 @@ def main():
 
     network = NeuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate)
 
-    training_data_file = open("mnist_dataset/mnist_train_100.csv",'r')
+    # load the mnist test data CSV file into a list
+    test_data_file = open("mnist_dataset/mnist_test_10.csv", 'r')
+    test_data_list = test_data_file.readlines()
+    test_data_file.close()
+
+    training_data_file = open("mnist_dataset/mnist_train.csv", 'r')
     training_data_list = training_data_file.readlines()
     training_data_file.close()
 
@@ -85,6 +90,11 @@ def main():
         targets[int(all_values[0])] = 0.99
         network.train(inputs, targets)
         pass
+
+    values_to_be_tested = test_data_list[0].split(',')
+    inputs = (numpy.asfarray(values_to_be_tested[1:]) / 255.0 * 0.99) + 0.01
+    print(values_to_be_tested[0:1])
+    print(network.query(inputs))
 
 
 if __name__ == '__main__':
